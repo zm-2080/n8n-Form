@@ -1,14 +1,79 @@
 services:
   - type: web
-    name: n8n
+    name: contact-form-submission
     env: node
+    region: oregon
+    plan: starter
+    branch: master
     buildCommand: |
       corepack enable
-      pnpm install --frozen-lockfile
-      pnpm build
-    startCommand: pnpm start
+      yarn install
+    startCommand: yarn start
+    healthCheckPath: /healthz
     envVars:
       - key: NODE_ENV
         value: production
       - key: N8N_PORT
         value: 5678
+      - key: N8N_HOST
+        value: 0.0.0.0
+      - key: N8N_PROTOCOL
+        value: https
+      - key: N8N_EDITOR_BASE_URL
+        value: https://contact-form-submission.onrender.com
+      - key: WEBHOOK_URL
+        value: https://contact-form-submission.onrender.com
+      - key: N8N_BASIC_AUTH_ACTIVE
+        value: true
+      - key: N8N_BASIC_AUTH_USER
+        value: admin
+      - key: N8N_BASIC_AUTH_PASSWORD
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        value: 6414830034-j9h7gtoqc0qm1718sp6mp38phm16u5d0.apps.googleusercontent.com
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: N8N_ENCRYPTION_KEY
+        sync: false
+      - key: N8N_DEFAULT_BINARY_DATA_MODE
+        value: filesystem
+      - key: N8N_SECURE_COOKIE
+        value: true
+      - key: N8N_COOKIES_SECURE
+        value: true
+      - key: N8N_PAYLOAD_SIZE_MAX
+        value: 16
+      - key: N8N_METRICS
+        value: true
+
+      # PostgreSQL
+      - key: DB_TYPE
+        value: postgresdb
+      - key: DB_POSTGRESDB_HOST
+        fromDatabase:
+          name: n8n-db
+          property: host
+      - key: DB_POSTGRESDB_PORT
+        fromDatabase:
+          name: n8n-db
+          property: port
+      - key: DB_POSTGRESDB_DATABASE
+        fromDatabase:
+          name: n8n-db
+          property: database
+      - key: DB_POSTGRESDB_USER
+        fromDatabase:
+          name: n8n-db
+          property: user
+      - key: DB_POSTGRESDB_PASSWORD
+        fromDatabase:
+          name: n8n-db
+          property: password
+
+databases:
+  - name: n8n-db
+    databaseName: n8n
+    user: n8n_user
+    region: oregon
+    plan: starter
+    postgresMajorVersion: 15
