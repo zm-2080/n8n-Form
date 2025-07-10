@@ -1,0 +1,4 @@
+buildCommand: |
+  corepack enable
+  yarn install
+startCommand: yarn start
